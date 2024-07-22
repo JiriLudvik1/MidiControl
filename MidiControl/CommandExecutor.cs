@@ -42,7 +42,7 @@ public static class CommandExecutor
         }
     }
     
-    public static void LaunchChrome()
+    private static void LaunchChrome()
     {
         try
         {
