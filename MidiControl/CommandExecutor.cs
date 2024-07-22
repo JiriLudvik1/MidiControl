@@ -8,7 +8,7 @@ public static class CommandExecutor
     private static readonly HashSet<int> _explorerLaunchChord = [60, 63, 67];
     private static readonly HashSet<int> _chromeLaunchChord = [60, 64, 67];
 
-    private static Dictionary<HashSet<int>, Action> _actionsDictionary = new()
+    private static Dictionary<HashSet<int>, Action> _actionsDictionary = new(new HashSetComparer())
     {
         {_explorerLaunchChord, LaunchExplorer},
         {_chromeLaunchChord, LaunchChrome}
