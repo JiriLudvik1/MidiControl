@@ -53,7 +53,7 @@ void DeviceMidiIn_MessageReceived(object? sender, MidiInMessageEventArgs? e)
                 Console.WriteLine($"note recorded: {note}");
             }
             
-            CommandExecuter.TryLaunchCommand(pressedNotesNumbersSet);
+            CommandExecutor.TryLaunchCommand(pressedNotesNumbersSet);
             
             pressedNotesNumbersSet.Clear();
             Console.WriteLine("-------------------Buffer cleared-------------------");
