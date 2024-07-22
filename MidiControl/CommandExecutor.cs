@@ -23,7 +23,7 @@ public static class CommandExecutor
             return;
         }
 
-        matchingHashSet.Value();
+        Task.Run(matchingHashSet.Value);
     }
 
     private static void LaunchExplorer()
