@@ -10,8 +10,9 @@ public static class CommandExecutor
     private static readonly HashSet<int> _chromeLaunchChord = [60, 64, 67];
     private static readonly HashSet<int> _azLoginRunChord = [60, 64 ];
     private static readonly HashSet<int> _closeFocusedWindowChord = [48];
-    private static readonly HashSet<int> _cycleFocusedWindowChord = [51];
     private static readonly HashSet<int> _cycleFocusedWindowBackwardChord = [50];
+    private static readonly HashSet<int> _cycleFocusedWindowChord = [51];
+    private static readonly HashSet<int> _toggleMaximizeWindowChord = [52];
 
     private static readonly Dictionary<HashSet<int>, Action> _actionsDictionary = new(new HashSetComparer())
     {
@@ -20,7 +21,8 @@ public static class CommandExecutor
         {_azLoginRunChord, RunAzLogin},
         {_closeFocusedWindowChord, WindowManipulator.CloseFocusedWindow},
         {_cycleFocusedWindowChord, WindowManipulator.CycleWindowsForward},
-        {_cycleFocusedWindowBackwardChord, WindowManipulator.CycleWindowsBackwards}
+        {_cycleFocusedWindowBackwardChord, WindowManipulator.CycleWindowsBackwards},
+        {_toggleMaximizeWindowChord, WindowManipulator.ToggleMaximizeCurrentWindow}
     };
 
     public static void TryLaunchCommand(HashSet<int> inputSet)
