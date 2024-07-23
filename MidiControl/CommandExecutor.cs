@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using MidiControl.WindowManipulatorDir;
 
 namespace MidiControl;
 
@@ -7,11 +8,19 @@ public static class CommandExecutor
     
     private static readonly HashSet<int> _explorerLaunchChord = [60, 63, 67];
     private static readonly HashSet<int> _chromeLaunchChord = [60, 64, 67];
+    private static readonly HashSet<int> _azLoginRunChord = [60, 64 ];
+    private static readonly HashSet<int> _closeFocusedWindowChord = [48];
+    private static readonly HashSet<int> _cycleFocusedWindowChord = [51];
+    private static readonly HashSet<int> _cycleFocusedWindowBackwardChord = [50];
 
-    private static Dictionary<HashSet<int>, Action> _actionsDictionary = new(new HashSetComparer())
+    private static readonly Dictionary<HashSet<int>, Action> _actionsDictionary = new(new HashSetComparer())
     {
         {_explorerLaunchChord, LaunchExplorer},
-        {_chromeLaunchChord, LaunchChrome}
+        {_chromeLaunchChord, LaunchChrome},
+        {_azLoginRunChord, RunAzLogin},
+        {_closeFocusedWindowChord, WindowManipulator.CloseFocusedWindow},
+        {_cycleFocusedWindowChord, WindowManipulator.CycleWindowsForward},
+        {_cycleFocusedWindowBackwardChord, WindowManipulator.CycleWindowsBackwards}
     };
 
     public static void TryLaunchCommand(HashSet<int> inputSet)
@@ -24,6 +33,26 @@ public static class CommandExecutor
         }
 
         Task.Run(matchingHashSet.Value);
+    }
+
+    private static void RunAzLogin()
+    {
+        try
+        {
+            var processStartInfo = new ProcessStartInfo()
+            {
+              UseShellExecute = true,
+              FileName = "powershell",
+              Arguments = "az login"
+            };
+
+            Process.Start(processStartInfo);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
     }
 
     private static void LaunchExplorer()
