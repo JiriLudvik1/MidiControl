@@ -4,6 +4,7 @@ using NAudio.Midi;
 var arturiaControllerId = -1;
 var notesPressed = 0;
 HashSet<int> pressedNotesNumbersSet = new();
+var locker = new object();
 
 for (int device = 0; device < MidiIn.NumberOfDevices; device++)
 {
@@ -23,41 +24,44 @@ Console.ReadLine();
 
 void DeviceMidiIn_MessageReceived(object? sender, MidiInMessageEventArgs? e)
 {
-    switch (e.MidiEvent.CommandCode)
+    lock (locker)
     {
-        case MidiCommandCode.NoteOn:
+        switch (e.MidiEvent.CommandCode)
         {
-            var casted = (NoteOnEvent)e.MidiEvent;
-            if (pressedNotesNumbersSet.Contains(casted.NoteNumber))
+            case MidiCommandCode.NoteOn:
             {
+                var casted = (NoteOnEvent)e.MidiEvent;
+                if (pressedNotesNumbersSet.Contains(casted.NoteNumber))
+                {
+                    notesPressed++;
+                    break;
+                }
+            
                 notesPressed++;
-                break;
-            }
-            
-            notesPressed++;
-            pressedNotesNumbersSet.Add(casted.NoteNumber);
-            break;
-        }
-
-        case MidiCommandCode.NoteOff:
-        {
-            notesPressed--;
-            if (notesPressed > 0)
-            {
+                pressedNotesNumbersSet.Add(casted.NoteNumber);
                 break;
             }
 
-            Console.WriteLine($"All notes released, total notes recorded: {pressedNotesNumbersSet.Count}");
-            foreach (var note in pressedNotesNumbersSet)
+            case MidiCommandCode.NoteOff:
             {
-                Console.WriteLine($"note recorded: {note}");
+                notesPressed--;
+                if (notesPressed > 0)
+                {
+                    break;
+                }
+
+                Console.WriteLine($"All notes released, total notes recorded: {pressedNotesNumbersSet.Count}");
+                foreach (var note in pressedNotesNumbersSet)
+                {
+                    Console.WriteLine($"note recorded: {note}");
+                }
+            
+                CommandExecutor.TryLaunchCommand(pressedNotesNumbersSet);
+            
+                pressedNotesNumbersSet.Clear();
+                Console.WriteLine("-------------------Buffer cleared-------------------");
+                break;
             }
-            
-            CommandExecutor.TryLaunchCommand(pressedNotesNumbersSet);
-            
-            pressedNotesNumbersSet.Clear();
-            Console.WriteLine("-------------------Buffer cleared-------------------");
-            break;
         }
     }
 }
